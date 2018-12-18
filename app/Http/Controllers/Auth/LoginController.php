@@ -59,7 +59,7 @@ class LoginController extends Controller
     {
         $githubUser = Socialite::driver('github')->user();
 
-        $user = User::where('provider_id', $githubUser->getId())->first();
+        $user = User::where('email', $githubUser->getEmail())->first();
 
         if(!$user){
              //add user to database
@@ -77,4 +77,46 @@ class LoginController extends Controller
 
         return redirect($this->redirectTo);
     }
+
+    /**
+     * Redirect the user to the Google authentication page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function redirectToGoogle()
+    {
+      return Socialite::with('google')->redirect();
+    }
+
+
+    /**
+     * Obtain the user information from Google.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function handleGoogleCallback()
+    {
+        $googleUser = Socialite::driver('google')->user();
+        //dd($googleUser);
+
+        $user = User::where('email', $googleUser->getEmail())->first();
+
+        if(!$user){
+             //add user to database
+            $user = User::create([
+                'email' => $googleUser->getEmail(),
+                'name'  => $googleUser->getName(),
+                'provider_id' => $googleUser->getId(),
+                'provider' => 'google',
+                'password' => null,
+            ]);
+        }
+
+        //login
+        Auth::login($user, true);
+
+        return redirect($this->redirectTo);
+    }
+
+
 }
