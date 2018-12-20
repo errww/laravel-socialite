@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,3 +22,9 @@ Route::get('login/github/callback', 'Auth\LoginController@handleProviderCallback
 
 Route::get('login/google', 'Auth\LoginController@redirectToGoogle');
 Route::get('login/google/callback', 'Auth\LoginController@handleGoogleCallback');
+
+//event broadcast
+Route::get('event','HomeController@event');
+// Route::get('listen',function(){
+// 	return view('listenBroadcast'); 
+// });

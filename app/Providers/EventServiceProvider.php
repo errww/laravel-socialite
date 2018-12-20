@@ -21,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
         SocialiteProviders\Manager\SocialiteWasCalled::class => [
             'SocialiteProviders\\Google\\GoogleExtendSocialite@handle',
         ],
+        'App\Events\TaskEvent' => [
+            'App\Listeners\TaskEventListener',
+        ],
     ];
 
     /**
