@@ -69,6 +69,16 @@
                                 @endif
                             </div>
                         </div>
+
+                        <div class="form-group row mb-0">
+                          <div class="col-mb-8 offset-mb-4">
+                            <a href="login/google" class="btn btn-primary">
+                              <i class="fa fa-google"></i>
+                              Login With Google
+                            </a>
+                          </div>
+                        </div> 
+
                     </form>
                 </div>
             </div>
