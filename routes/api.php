@@ -16,3 +16,21 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//list user
+Route::get('users','Api\UserController@index');
+
+//list single user
+Route::get('user/{id}','Api\UserController@show');
+
+//create new user
+Route::post('user','Api\UserController@store');
+
+//update user
+Route::put('user','Api\UserController@store');
+
+//delete
+Route::delete('user/{id}','Api\UserController@destroy');
+
+//show total user
+Route::get('user/show/total-user','Api\UserController@showTotalUser');
