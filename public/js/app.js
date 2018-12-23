@@ -14055,7 +14055,7 @@ window.Vue = __webpack_require__(39);
  */
 
 Vue.component('example-component', __webpack_require__(42));
-Vue.component('component-dashboard', __webpack_require__(53));
+Vue.component('component-dashboard', __webpack_require__(45));
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))
@@ -57692,28 +57692,15 @@ if (false) {
 }
 
 /***/ }),
-/* 45 */,
-/* 46 */,
-/* 47 */,
-/* 48 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 49 */,
-/* 50 */,
-/* 51 */,
-/* 52 */,
-/* 53 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(11)
 /* script */
-var __vue_script__ = __webpack_require__(54)
+var __vue_script__ = __webpack_require__(46)
 /* template */
-var __vue_template__ = __webpack_require__(55)
+var __vue_template__ = __webpack_require__(47)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -57752,7 +57739,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 54 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -57768,12 +57755,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      count: 0
+      count: 0,
+      totalUser: 0
     };
+  },
+  created: function created() {
+    this.getDataOfTotalUser();
   },
   mounted: function mounted() {
     this.listen();
@@ -57790,6 +57787,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }).leaving(function (user) {
         return _this.count--;
       });
+    },
+    getDataOfTotalUser: function getDataOfTotalUser() {
+      var _this2 = this;
+
+      var url = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '/api/user/show/total-user';
+
+      axios.get(url).then(function (response) {
+        _this2.totalUser = response.data.total;
+      }).catch(function (errors) {
+        console.log(errors);
+      });
     }
     // Echo.private('tasks')
     //     .listen('TaskEvent',(e) => {
@@ -57800,7 +57808,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 55 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -57814,6 +57822,16 @@ var render = function() {
         _vm._v(" "),
         _c("h3", { staticClass: "text-center" }, [_vm._v(_vm._s(this.count))])
       ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card col-md-4 mx-auto" }, [
+      _c("div", { staticClass: "card-body" }, [
+        _c("h3", { staticClass: "text-center" }, [_vm._v("Total User")]),
+        _vm._v(" "),
+        _c("h3", { staticClass: "text-center" }, [
+          _vm._v(_vm._s(this.totalUser))
+        ])
+      ])
     ])
   ])
 }
@@ -57826,6 +57844,12 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-489fcfb4", module.exports)
   }
 }
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

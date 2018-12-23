@@ -28,3 +28,5 @@ Route::get('event','HomeController@event');
 // Route::get('listen',function(){
 // 	return view('listenBroadcast'); 
 // });
+
+Route::get('/total-user', 'HomeController@totalUser')->name('total-user');
