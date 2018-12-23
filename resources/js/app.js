@@ -18,6 +18,7 @@ window.Vue = require('vue');
  */
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
+Vue.component('component-dashboard', require('./components/AdminComponents/Dashboard/Dashboard.vue'));
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))
@@ -29,5 +30,11 @@ Vue.component('example-component', require('./components/ExampleComponent.vue'))
  */
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    // created(){
+    // 	Echo.private('tasks')
+    // 		.listen('TaskEvent',(e) => {
+    //     		console.log(e);
+    // 	});
+    // }
 });
