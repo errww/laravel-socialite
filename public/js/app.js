@@ -57740,9 +57740,72 @@ module.exports = Component.exports
 
 /***/ }),
 /* 46 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed: SyntaxError: Unexpected token (25:0)\n\n\u001b[0m \u001b[90m 23 | \u001b[39m        data() {\n \u001b[90m 24 | \u001b[39m          \u001b[36mreturn\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 25 | \u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<\u001b[39m \u001b[33mHEAD\u001b[39m\n \u001b[90m    | \u001b[39m\u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 26 | \u001b[39m            count\u001b[33m:\u001b[39m\u001b[35m0\u001b[39m\n \u001b[90m 27 | \u001b[39m          }\n \u001b[90m 28 | \u001b[39m        }\u001b[33m,\u001b[39m\u001b[0m\n");
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      count: 0,
+      totalUser: 0
+    };
+  },
+  created: function created() {
+    this.getDataOfTotalUser();
+  },
+  mounted: function mounted() {
+    this.listen();
+  },
+
+  methods: {
+    listen: function listen() {
+      var _this = this;
+
+      Echo.join('tasks').here(function (user) {
+        return _this.count = user.length;
+      }).joining(function (user) {
+        return _this.count++;
+      }).leaving(function (user) {
+        return _this.count--;
+      });
+    },
+    getDataOfTotalUser: function getDataOfTotalUser() {
+      var _this2 = this;
+
+      var url = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '/api/user/show/total-user';
+
+      axios.get(url).then(function (response) {
+        _this2.totalUser = response.data.total;
+      }).catch(function (errors) {
+        console.log(errors);
+      });
+    }
+    // Echo.private('tasks')
+    //     .listen('TaskEvent',(e) => {
+    //     console.log(e);
+    // });
+
+  }
+});
 
 /***/ }),
 /* 47 */
@@ -57760,7 +57823,7 @@ var render = function() {
         _c("h3", { staticClass: "text-center" }, [_vm._v(_vm._s(this.count))])
       ])
     ]),
-    _vm._v("\n<<<<<<< HEAD\n=======\n    "),
+    _vm._v(" "),
     _c("div", { staticClass: "card col-md-4 mx-auto" }, [
       _c("div", { staticClass: "card-body" }, [
         _c("h3", { staticClass: "text-center" }, [_vm._v("Total User")]),
@@ -57769,8 +57832,7 @@ var render = function() {
           _vm._v(_vm._s(this.totalUser))
         ])
       ])
-    ]),
-    _vm._v("\n>>>>>>> cd5701b09a6ac42aee0c5dc03f8c65a3fceb5551\n  ")
+    ])
   ])
 }
 var staticRenderFns = []

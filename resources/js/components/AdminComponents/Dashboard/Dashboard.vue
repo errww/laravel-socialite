@@ -6,15 +6,12 @@
             <h3 class="text-center">{{ this.count }}</h3>
         </div>
     </div>
-<<<<<<< HEAD
-=======
     <div class="card col-md-4 mx-auto">
           <div class="card-body">
             <h3 class="text-center">Total User</h3>
             <h3 class="text-center">{{ this.totalUser }}</h3>
         </div>
     </div>
->>>>>>> cd5701b09a6ac42aee0c5dc03f8c65a3fceb5551
   </div>
 </template>
 
@@ -22,11 +19,6 @@
     export default {
         data() {
           return {
-<<<<<<< HEAD
-            count:0
-          }
-        },
-=======
             count:0,
             totalUser:0
           }
@@ -34,7 +26,7 @@
         created(){
           this.getDataOfTotalUser()
         },
->>>>>>> cd5701b09a6ac42aee0c5dc03f8c65a3fceb5551
+
         mounted(){
           this.listen()
         },
@@ -44,8 +36,6 @@
                 .here(user => this.count = user.length)
                 .joining(user => this.count++)
                 .leaving(user => this.count--);
-<<<<<<< HEAD
-=======
           },
           getDataOfTotalUser(url = '/api/user/show/total-user'){
             axios.get(url)
@@ -55,7 +45,6 @@
                   .catch(errors =>{
                     console.log(errors);
                   });
->>>>>>> cd5701b09a6ac42aee0c5dc03f8c65a3fceb5551
           }
           // Echo.private('tasks')
           //     .listen('TaskEvent',(e) => {

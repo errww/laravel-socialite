@@ -28,8 +28,3 @@ Route::get('event','HomeController@event');
 // Route::get('listen',function(){
 // 	return view('listenBroadcast'); 
 // });
-<<<<<<< HEAD
-=======
-
-Route::get('/total-user', 'HomeController@totalUser')->name('total-user');
->>>>>>> cd5701b09a6ac42aee0c5dc03f8c65a3fceb5551

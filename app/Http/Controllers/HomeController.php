@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Events\TaskEvent;
 use Auth;
-<<<<<<< HEAD
-=======
 use App\User;
 use App\Http\Resources\User as UserResource;
 
->>>>>>> cd5701b09a6ac42aee0c5dc03f8c65a3fceb5551
 
 class HomeController extends Controller
 {
@@ -34,14 +31,12 @@ class HomeController extends Controller
         return view('home');
     }
 
-<<<<<<< HEAD
-=======
+
     public function totalUser()
     {
         return UserResource::collection(User::all());
     }
 
->>>>>>> cd5701b09a6ac42aee0c5dc03f8c65a3fceb5551
     public function event()
     {
         $message  = 'pesan..';
