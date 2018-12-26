@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Events\TaskEvent;
 use Auth;
 use App\User;
-use App\Http\Resources\User as UserResource;
 
 
 class HomeController extends Controller
@@ -31,10 +30,6 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function totalUser()
-    {
-        return UserResource::collection(User::all());
-    }
 
     public function event()
     {

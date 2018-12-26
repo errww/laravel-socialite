@@ -29,4 +29,5 @@ Route::get('event','HomeController@event');
 // 	return view('listenBroadcast'); 
 // });
 
-Route::get('/total-user', 'HomeController@totalUser')->name('total-user');
+Route::get('awaydays', 'AwaydayController@index')->name('awaydays');
+Route::get('awaydays/{id}', 'AwaydayController@show')->name('awaydays-show');
