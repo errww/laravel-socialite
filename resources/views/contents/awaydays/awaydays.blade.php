@@ -25,7 +25,7 @@
                         <tr>
                           <th scope="col">#</th>
                           <th scope="col">Judul</th>
-                          <th scope="col">Tgl Match</th>
+                          <th scope="col">Tanggal Match</th>
                           <th scope="col">Tutup Pendaftaran</th>
                           <th scope="col">Total pendaftar</th>
                           <th scope="col">Status</th>
@@ -34,7 +34,7 @@
                       <tbody>
                         <tr>
                           <th scope="row">1</th>
-                          <td>Match PSSI vs PSSI </td>
+                          <td>Match PSSI vs PSSI hdhdhdh </td>
                           <td>11/01/2018</td>
                           <td>9/01/2018</td>
                           <td>100/450</td>

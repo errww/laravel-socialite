@@ -34,3 +34,10 @@ Route::delete('user/{id}','Api\UserController@destroy');
 
 //show total user
 Route::get('user/show/total-user','Api\UserController@showTotalUser');
+
+//list awayday
+Route::get('awaydays','Api\AwaydayController@index');
+//list single awayday
+Route::get('awayday/{slug}','Api\AwaydayController@show');
+//create new awayday
+Route::post('awayday','Api\AwaydayController@store');

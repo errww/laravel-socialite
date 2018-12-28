@@ -39,30 +39,70 @@
                         <button type="button" class="btn btn-outline-success">Tutup : 09/01/2019</button>
                       </li>
                     </ul>
+
+                    <div class="row">
+                      <div class="card col-md-4 mx-auto">
+                            <div class="card-body">
+                              <h4 class="text-center">Slot Terisi</h4>
+                              <h4 class="text-center">0</h4>
+                          </div>
+                      </div>
+                      <div class="card col-md-4 mx-auto">
+                            <div class="card-body">
+                              <h4 class="text-center">Slot Tersisa</h4>
+                              <h4 class="text-center">200</h4>
+                          </div>
+                      </div>
+                    </div>
+                    
+                    <hr>
+                    <p class="text-center">
+                      <button class="btn btn-success">Daftar Awaydays</button>
+                    </p>
                     
                     <hr>
 
-                    <table class="table table-bordered">
+                    <table class="table table-striped">
                       <tbody>
                         <tr>
-                          <td>Slot Tersisa :</td>
-                          <td>0</td>
+                          <td>
+                            <p class="badge badge-warning float-right">Belum Konfirmasi
+                                <i class="fa fa-unlock"></i>
+                            </p>
+                            <p class="lead">Lorem Ipsum Dolor <span class="fa fa-check-circle"></span>
+                            </p>
+                            <p>
+                               Mendaftar Awaydays [ Match P vs K ]
+                            </p>
+                          </td>                          
                         </tr>
                         <tr>
-                          <td>Total Bis :</td>
-                          <td>20</td>
+                          <td>
+                            <p class="badge badge-warning float-right">Belum Konfirmasi
+                                <i class="fa fa-unlock"></i>
+                            </p>
+                            <p class="lead">Lorem Ipsum Dolor <span class="fa fa-check-circle"></span>
+                            </p>
+                            <p>
+                               Mendaftar Awaydays [ Match P vs K ]
+                            </p>
+                          </td>                          
                         </tr>
                         <tr>
-                          <td>Total Mobil :</td>
-                          <td>20</td>
+                          <td>
+                            <p class="badge badge-warning float-right">Belum Konfirmasi
+                                <i class="fa fa-unlock"></i>
+                            </p>
+                            <p class="lead">Lorem Ipsum Dolor <span class="fa fa-check-circle"></span>
+                            </p>
+                            <p>
+                               Mendaftar Awaydays [ Match P vs K ]
+                            </p>
+                          </td>                          
                         </tr>
-                        <tr>
-                          <td>Total Sepeda Motor :</td>
-                          <td>1000</td>
-                        </tr>
+                                          
                       </tbody>
                     </table>
-
                    
                 </div>
             </div>
@@ -70,3 +110,7 @@
     </div>
 </div>
 @endsection
+
+@section('scripts')
+
+@endsection('scripts')
