@@ -26,6 +26,7 @@
         created(){
           this.getDataOfTotalUser()
         },
+
         mounted(){
           this.listen()
         },

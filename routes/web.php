@@ -31,3 +31,4 @@ Route::get('event','HomeController@event');
 
 Route::get('awaydays', 'AwaydayController@index')->name('awaydays');
 Route::get('awaydays/{id}', 'AwaydayController@show')->name('awaydays-show');
+
