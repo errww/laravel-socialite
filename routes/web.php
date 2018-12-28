@@ -28,3 +28,7 @@ Route::get('event','HomeController@event');
 // Route::get('listen',function(){
 // 	return view('listenBroadcast'); 
 // });
+
+Route::get('awaydays', 'AwaydayController@index')->name('awaydays');
+Route::get('awaydays/{id}', 'AwaydayController@show')->name('awaydays-show');
+

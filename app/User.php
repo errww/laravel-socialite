@@ -27,4 +27,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token', 'provider_id', 'provider'
     ];
+
+    public function awayday(){
+
+        return $this->hasMany('App\Awayday');
+    }
 }
