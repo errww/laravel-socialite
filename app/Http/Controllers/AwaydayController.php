@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AwaydayController extends Controller
 {
@@ -12,6 +13,7 @@ class AwaydayController extends Controller
 	 */
     public function index()
     {
+        //dd(Auth::id());
     	return view('contents.awaydays.awaydays');
     }
 

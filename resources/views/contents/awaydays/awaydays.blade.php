@@ -2,108 +2,7 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Awaydays
-                <button type="button" class="btn btn-info float-right" data-toggle="modal" data-target="#bukaPendaftaranModal">Buka Pendaftaran</button>
-                </div>
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-                    <!-- alert -->
-                    <div class="alert alert-warning" role="alert">
-                        Anda belum membuka pendaftaran
-                    </div>
-                    <!-- end alert -->
-                    <!-- table -->
-                    <table class="table table-responsive">
-                      <thead class="thead-light">
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Judul</th>
-                          <th scope="col">Tanggal Match</th>
-                          <th scope="col">Tutup Pendaftaran</th>
-                          <th scope="col">Total pendaftar</th>
-                          <th scope="col">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Match PSSI vs PSSI hdhdhdh </td>
-                          <td>11/01/2018</td>
-                          <td>9/01/2018</td>
-                          <td>100/450</td>
-                          <td><span class="badge badge-success">Buka</span></td>
-                        </tr>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Match PSSI vs PSSI</td>
-                          <td>11/01/2018</td>
-                          <td>9/01/2018</td>
-                          <td>100/450</td>
-                          <td><span class="badge badge-danger">Tutup</span></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <!-- end table -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="bukaPendaftaranModal" tabindex="-1" role="dialog" aria-labelledby="bukaPendaftaranModal" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Buka Pendaftaran</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="form-group">
-                <label>Judul</label>
-                <input type="text" class="form-control">
-              </div>
-              <div class="form-group">
-                <label>Tanggal Match</label>
-                <input type="text" class="form-control">
-              </div>
-              <div class="form-group">
-                <label>Lokasi Match</label>
-                <input type="text" class="form-control">
-              </div>
-              <div class="form-group">
-                <label>Jumlah Bayar</label>
-                <input type="text" class="form-control">
-              </div>
-              <div class="form-group">
-                <label>Jumlah Slot</label>
-                <input type="text" class="form-control">
-                <small class="form-text text-muted">Tulis dengan angka, contoh : 450</small>
-              </div>
-              <div class="form-group">
-                <label>Penutupan Registrasi</label>
-                <input type="text" class="form-control">
-              </div>
-              <div class="form-group">
-                <label>Keterangan</label>
-                <textarea class="form-control" rows="3"></textarea>
-                </div>
-              <button type="submit" class="btn btn-primary float-right">Submit</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- End Modal -->
+    <component-form-table-awayday></component-form-table-awayday>
 
     <div class="row justify-content-center mt-5">
         <div class="col-md-8">
@@ -167,3 +66,4 @@
 
 </div>
 @endsection
+

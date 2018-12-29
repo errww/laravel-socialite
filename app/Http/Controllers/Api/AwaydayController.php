@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Awayday;
 use App\Http\Resources\Awayday as AwaydayResource;
 
@@ -44,17 +45,17 @@ class AwaydayController extends Controller
         $awayday = $request->isMethod('put') ? Awayday::findOrFail($request->slug) : new Awayday;
 
 
-        $awayday->id = $request->input('id');
-        $awayday->slug = $request->input('slug');
+        //$awayday->id = $request->input('id');
+        $awayday->slug = uniqid();
         $awayday->judul = $request->input('judul');
-        $awayday->judul = $request->input('jadwal_match');
+        $awayday->jadwal_match = $request->input('jadwal_match');
         $awayday->lokasi_match = $request->input('lokasi_match');
         $awayday->biaya = $request->input('biaya');
         $awayday->slot = $request->input('slot');
         $awayday->tutup_pendaftaran = $request->input('tutup_pendaftaran');
         $awayday->keterangan = $request->input('keterangan');
-        $awayday->status_aktif = $request->input('status_aktif');
-        $awayday->user_id = $request->input('user_id');
+        $awayday->status_aktif = 'open';
+        $awayday->user_id = '1';
         
 
         if($awayday->save()){

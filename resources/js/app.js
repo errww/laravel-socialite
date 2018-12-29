@@ -19,6 +19,9 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
 Vue.component('component-dashboard', require('./components/AdminComponents/Dashboard/Dashboard.vue'));
+//component for form and table awayday
+Vue.component('component-form-table-awayday',require('./components/AdminComponents/Awayday/FormInsertAndTableComponent.vue'));
+
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))
@@ -31,10 +34,4 @@ Vue.component('component-dashboard', require('./components/AdminComponents/Dashb
 
 const app = new Vue({
     el: '#app',
-    // created(){
-    // 	Echo.private('tasks')
-    // 		.listen('TaskEvent',(e) => {
-    //     		console.log(e);
-    // 	});
-    // }
 });
