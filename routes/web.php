@@ -16,6 +16,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
+//authenticated user id
+Route::get('authUserId','AwaydayController@authUserId');
+
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('login/github', 'Auth\LoginController@redirectToProvider');
 Route::get('login/github/callback', 'Auth\LoginController@handleProviderCallback');
@@ -31,4 +34,8 @@ Route::get('event','HomeController@event');
 
 Route::get('awaydays', 'AwaydayController@index')->name('awaydays');
 Route::get('awaydays/{id}', 'AwaydayController@show')->name('awaydays-show');
+
+Route::get('rsc/showAwaydayData', 'AwaydayController@showAwaydayData')->name('show-awayday-data');
+Route::get('rsc/getAwaydayTimeline', 'AwaydayController@getAwaydayTimeline')->name('get-awayday-timeline');
+Route::post('rsc/saveAwaydayData', 'AwaydayController@saveAwaydayData')->name('save-awayday-data');
 

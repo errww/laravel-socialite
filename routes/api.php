@@ -17,27 +17,27 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//list user
-Route::get('users','Api\UserController@index');
 
-//list single user
-Route::get('user/{id}','Api\UserController@show');
+	Route::get('users','Api\UserController@index');
 
-//create new user
-Route::post('user','Api\UserController@store');
+	//list single user
+	Route::get('user/{id}','Api\UserController@show');
 
-//update user
-Route::put('user','Api\UserController@store');
+	//create new user
+	Route::post('user','Api\UserController@store');
 
-//delete
-Route::delete('user/{id}','Api\UserController@destroy');
+	//update user
+	Route::put('user','Api\UserController@store');
 
-//show total user
-Route::get('user/show/total-user','Api\UserController@showTotalUser');
+	//delete
+	Route::delete('user/{id}','Api\UserController@destroy');
 
-//list awayday
-Route::get('awaydays','Api\AwaydayController@index');
-//list single awayday
-Route::get('awayday/{slug}','Api\AwaydayController@show');
-//create new awayday
-Route::post('awayday','Api\AwaydayController@store');
+	//show total user
+	Route::get('user/show/total-user','Api\UserController@showTotalUser');
+
+	//list awayday
+	Route::get('awaydays','Api\AwaydayController@index');
+	//list single awayday
+	Route::get('awayday','Api\AwaydayController@show');
+	//create new awayday
+	Route::post('awayday','Api\AwaydayController@store');

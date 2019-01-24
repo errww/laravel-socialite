@@ -402,6 +402,115 @@ module.exports = g;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10772,7 +10881,7 @@ return jQuery;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10874,115 +10983,6 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
 
 /***/ }),
 /* 5 */
@@ -14028,7 +14028,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(13);
-module.exports = __webpack_require__(53);
+module.exports = __webpack_require__(56);
 
 
 /***/ }),
@@ -14058,6 +14058,8 @@ Vue.component('example-component', __webpack_require__(44));
 Vue.component('component-dashboard', __webpack_require__(47));
 //component for form and table awayday
 Vue.component('component-form-table-awayday', __webpack_require__(50));
+//component for awaydays timeline
+Vue.component('component-timeline-awaydays', __webpack_require__(53));
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))
@@ -14090,7 +14092,7 @@ window._ = __webpack_require__(15);
 
 try {
   window.Popper = __webpack_require__(5).default;
-  window.$ = window.jQuery = __webpack_require__(2);
+  window.$ = window.jQuery = __webpack_require__(3);
 
   __webpack_require__(17);
 } catch (e) {}
@@ -14135,6 +14137,7 @@ window.Echo = new __WEBPACK_IMPORTED_MODULE_0_laravel_echo__["a" /* default */](
   key: '3c7c1fbabab026f5f3f0',
   cluster: 'ap1',
   encrypted: true
+
 });
 
 /***/ }),
@@ -31290,7 +31293,7 @@ module.exports = function(module) {
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
   */
 (function (global, factory) {
-   true ? factory(exports, __webpack_require__(2), __webpack_require__(5)) :
+   true ? factory(exports, __webpack_require__(3), __webpack_require__(5)) :
   typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'popper.js'], factory) :
   (factory((global.bootstrap = {}),global.jQuery,global.Popper));
 }(this, (function (exports,$,Popper) { 'use strict';
@@ -35246,7 +35249,7 @@ module.exports = __webpack_require__(19);
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(6);
 var Axios = __webpack_require__(21);
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(4);
 
 /**
  * Create an instance of Axios
@@ -35329,7 +35332,7 @@ function isSlowBuffer (obj) {
 "use strict";
 
 
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(4);
 var utils = __webpack_require__(0);
 var InterceptorManager = __webpack_require__(30);
 var dispatchRequest = __webpack_require__(31);
@@ -35868,7 +35871,7 @@ module.exports = InterceptorManager;
 var utils = __webpack_require__(0);
 var transformData = __webpack_require__(32);
 var isCancel = __webpack_require__(10);
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(4);
 var isAbsoluteURL = __webpack_require__(33);
 var combineURLs = __webpack_require__(34);
 
@@ -36136,7 +36139,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
  */
 /* global define */
 (function (define) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = (function ($) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_RESULT__ = (function ($) {
         return (function () {
             var $container;
             var listener;
@@ -58060,7 +58063,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(45)
 /* template */
@@ -58179,7 +58182,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(48)
 /* template */
@@ -58333,7 +58336,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(51)
 /* template */
@@ -58493,36 +58496,83 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
 	data: function data() {
 		return {
+			authenticatedUserId: '',
 			judul: '',
 			jadwal_match: '',
 			lokasi_match: '',
 			biaya: '',
 			slot: '',
 			tutup_pendaftaran: '',
-			keterangan: ''
+			keterangan: '',
+			awaydays: [],
+			pageSize: 5,
+			currentPage: 1,
+			totalData: '0',
+			totalPage: ''
 		};
 	},
+	created: function created() {
+		this.getAuthenticatedUser();
 
+		this.getAwaydays();
+	},
+	mounted: function mounted() {},
+
+	computed: {
+		sortedAwaydays: function sortedAwaydays() {
+			var _this = this;
+
+			return this.awaydays.filter(function (row, index) {
+				var start = (_this.currentPage - 1) * _this.pageSize;
+				var end = _this.currentPage * _this.pageSize;
+				if (index >= start && index < end) return true;
+			});
+		}
+	},
 	methods: {
+		nextPage: function nextPage() {
+			if (this.currentPage * this.pageSize < this.awaydays.length) this.currentPage++;
+		},
+		prevPage: function prevPage() {
+			if (this.currentPage > 1) this.currentPage--;
+		},
+		//insert data into database
 		insertData: function insertData() {
 			var currentObj = this;
 			//data form
 			var formData = {
+				row: 'Terbaru',
 				judul: this.judul,
 				jadwal_match: this.jadwal_match,
 				lokasi_match: this.lokasi_match,
 				biaya: this.biaya,
 				slot: this.slot,
 				tutup_pendaftaran: this.tutup_pendaftaran,
-				keterangan: this.keterangan
+				keterangan: this.keterangan,
+				status_aktif: 'open'
 			};
 			axios({
 				method: 'post',
-				url: '/api/awayday',
+				url: '/rsc/saveAwaydayData',
 				data: formData
 			}).then(function (response) {
 				//clear all data
@@ -58535,6 +58585,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 				currentObj.keterangan = '';
 
 				toastr.success(response.data.judul, 'Success Buka Pendaftaran');
+				//close the modal
+				currentObj.awaydays.unshift(formData);
+			}).catch(function (error) {
+				console.log(error);
+			});
+		},
+
+
+		//get user id
+		getAuthenticatedUser: function getAuthenticatedUser() {
+			var currentObj = this;
+			axios({
+				method: 'get',
+				url: 'authUserId'
+			}).then(function (response) {
+				//alert(response.data.AuthId)
+				currentObj.authenticatedUserId = response.data.AuthId.name;
+			}).catch(function (error) {
+				console.log(error);
+			});
+		},
+
+
+		//get data awaydays
+		getAwaydays: function getAwaydays() {
+			var currentObj = this;
+			axios({
+				method: 'get',
+				url: 'rsc/showAwaydayData'
+			}).then(function (response) {
+				console.log(response);
+				currentObj.awaydays = response.data;
+				currentObj.totalData = currentObj.awaydays.length;
 			}).catch(function (error) {
 				console.log(error);
 			});
@@ -58551,11 +58634,133 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm._m(0),
+    _c("div", { staticClass: "row justify-content-center" }, [
+      _c("div", { staticClass: "col-md-8" }, [
+        _c("div", { staticClass: "card" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
+            _c("form", [
+              _c("div", { staticClass: "form-row" }, [
+                _c("div", { staticClass: "col" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { staticClass: "font-weight-bold" }, [
+                      _vm._v("Tampilkan")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.pageSize,
+                            expression: "pageSize"
+                          }
+                        ],
+                        staticClass: "form-control col-md-2",
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.pageSize = $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          }
+                        }
+                      },
+                      [
+                        _c("option", [_vm._v("5")]),
+                        _vm._v(" "),
+                        _c("option", [_vm._v("10")]),
+                        _vm._v(" "),
+                        _c("option", [_vm._v("50")]),
+                        _vm._v(" "),
+                        _c("option", [_vm._v("100")])
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "table-responsive" }, [
+              _c("table", { staticClass: "table" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.sortedAwaydays, function(awayday, i) {
+                    return _c("tr", { key: awayday.id }, [
+                      _c("th", [_vm._v(_vm._s(awayday.row))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(awayday.judul))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(awayday.jadwal_match))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(awayday.tutup_pendaftaran))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v("-")]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _c("span", { staticClass: "badge badge-success" }, [
+                          _vm._v(_vm._s(awayday.status_aktif))
+                        ])
+                      ])
+                    ])
+                  }),
+                  0
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("p", { staticClass: "font-weight-bold float-left" }, [
+              _vm._v(
+                "\n                      Halaman " +
+                  _vm._s(_vm.currentPage) +
+                  " - Total Record " +
+                  _vm._s(_vm.totalData) +
+                  "\n                    "
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", { staticClass: "float-right" }, [
+              _c(
+                "button",
+                { staticClass: "btn btn-default", on: { click: _vm.prevPage } },
+                [
+                  _c("i", { staticClass: "fa fa-angle-double-left" }),
+                  _vm._v(" Previous\n                      ")
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                { staticClass: "btn btn-default", on: { click: _vm.nextPage } },
+                [
+                  _vm._v(
+                    "\n                        Next\n                        "
+                  ),
+                  _c("i", { staticClass: "fa fa-angle-double-right" })
+                ]
+              )
+            ])
+          ])
+        ])
+      ])
+    ]),
     _vm._v(" "),
     _c(
       "div",
       {
+        ref: "vuemodal",
         staticClass: "modal fade",
         attrs: {
           id: "bukaPendaftaranModal",
@@ -58571,7 +58776,7 @@ var render = function() {
           { staticClass: "modal-dialog", attrs: { role: "document" } },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(1),
+              _vm._m(2),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c(
@@ -58771,9 +58976,9 @@ var render = function() {
                       })
                     ]),
                     _vm._v(" "),
-                    _vm._m(2),
+                    _vm._m(3),
                     _vm._v(" "),
-                    _vm._m(3)
+                    _vm._m(4)
                   ]
                 )
               ])
@@ -58789,99 +58994,44 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row justify-content-center" }, [
-      _c("div", { staticClass: "col-md-8" }, [
-        _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [
-            _vm._v("Awaydays\n                "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-info float-right",
-                attrs: {
-                  type: "button",
-                  "data-toggle": "modal",
-                  "data-target": "#bukaPendaftaranModal"
-                }
-              },
-              [_vm._v("Buka Pendaftaran")]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card-body" }, [
-            _c(
-              "div",
-              { staticClass: "alert alert-warning", attrs: { role: "alert" } },
-              [
-                _vm._v(
-                  " \n                        Anda belum membuka pendaftaran\n                    "
-                )
-              ]
-            ),
-            _vm._v(" "),
-            _c("table", { staticClass: "table table-responsive" }, [
-              _c("thead", { staticClass: "thead-light" }, [
-                _c("tr", [
-                  _c("th", { attrs: { scope: "col" } }, [_vm._v("#")]),
-                  _vm._v(" "),
-                  _c("th", { attrs: { scope: "col" } }, [_vm._v("Judul")]),
-                  _vm._v(" "),
-                  _c("th", { attrs: { scope: "col" } }, [
-                    _vm._v("Tanggal Match")
-                  ]),
-                  _vm._v(" "),
-                  _c("th", { attrs: { scope: "col" } }, [
-                    _vm._v("Tutup Pendaftaran")
-                  ]),
-                  _vm._v(" "),
-                  _c("th", { attrs: { scope: "col" } }, [
-                    _vm._v("Total pendaftar")
-                  ]),
-                  _vm._v(" "),
-                  _c("th", { attrs: { scope: "col" } }, [_vm._v("Status")])
-                ])
-              ]),
-              _vm._v(" "),
-              _c("tbody", [
-                _c("tr", [
-                  _c("th", { attrs: { scope: "row" } }, [_vm._v("1")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("Match PSSI vs PSSI hdhdhdh ")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("11/01/2018")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("9/01/2018")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("100/450")]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c("span", { staticClass: "badge badge-success" }, [
-                      _vm._v("Buka")
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("tr", [
-                  _c("th", { attrs: { scope: "row" } }, [_vm._v("1")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("Match PSSI vs PSSI")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("11/01/2018")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("9/01/2018")]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("100/450")]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c("span", { staticClass: "badge badge-danger" }, [
-                      _vm._v("Tutup")
-                    ])
-                  ])
-                ])
-              ])
-            ])
-          ])
-        ])
+    return _c("div", { staticClass: "card-header bg-success" }, [
+      _vm._v("Awaydays\n                "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-default float-right",
+          attrs: {
+            type: "button",
+            "data-toggle": "modal",
+            "data-target": "#bukaPendaftaranModal"
+          }
+        },
+        [
+          _c("i", { staticClass: "fa fa-edit" }),
+          _vm._v(
+            "\n                Buka Pendaftaran Awaydays\n                "
+          )
+        ]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", { staticClass: "thead-light" }, [
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Judul")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Tanggal Match")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Tutup Pendaftaran")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Total Pendaftar")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")])
       ])
     ])
   },
@@ -58951,6 +59101,291 @@ if (false) {
 
 /***/ }),
 /* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(54)
+/* template */
+var __vue_template__ = __webpack_require__(55)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/AdminComponents/Awayday/timelineAwayday.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2aab0047", Component.options)
+  } else {
+    hotAPI.reload("data-v-2aab0047", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      awaydays: []
+    };
+  },
+
+  methods: {
+    //get data awaydays
+    getAwaydays: function getAwaydays() {
+      var currentObj = this;
+      axios({
+        method: 'get',
+        url: 'rsc/showAwaydayData'
+      }).then(function (response) {
+        console.log(response);
+        currentObj.awaydays = response.data;
+        currentObj.totalData = currentObj.awaydays.length;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  }
+});
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("div", { staticClass: "row justify-content-center mt-5" }, [
+        _c("div", { staticClass: "col-md-8" }, [
+          _c("div", { staticClass: "card" }, [
+            _c("div", { staticClass: "card-header bg-success" }, [
+              _vm._v("Awaydays Terbaru")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c("table", { staticClass: "table table-striped" }, [
+                _c("tbody", [
+                  _c("tr", [
+                    _c("td", [
+                      _c(
+                        "p",
+                        { staticClass: "badge badge-success float-right" },
+                        [
+                          _vm._v("Buka\n                                "),
+                          _c("i", { staticClass: "fa fa-unlock" })
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("p", { staticClass: "lead" }, [
+                        _vm._v("Mancing Mania "),
+                        _c("span", { staticClass: "fa fa-check-circle" }),
+                        _vm._v(
+                          "\n                                [ Match Persija vs PSS Sleman ]\n                            "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("p", [
+                        _vm._v(
+                          "Monggo daftar dolor-dolor..\n                            "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("ul", { staticClass: "list-inline" }, [
+                        _c("li", { staticClass: "list-inline-item" }, [
+                          _vm._v("Match : 2019-07-20")
+                        ]),
+                        _vm._v(" "),
+                        _c("li", { staticClass: "list-inline-item" }, [
+                          _vm._v("Open Slot: 1500 Kursi")
+                        ]),
+                        _vm._v(" "),
+                        _c("li", { staticClass: "list-inline-item" }, [
+                          _vm._v("Biaya : 500.000")
+                        ]),
+                        _vm._v(" "),
+                        _c("li", { staticClass: "list-inline-item" }, [
+                          _vm._v("Tutup : 2019-07-15")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("button", { staticClass: "btn btn-success" }, [
+                        _c("i", { staticClass: "fa fa-eye" }),
+                        _vm._v(" Selengkapnya >>")
+                      ])
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("tr", [
+                    _c("td", [
+                      _c(
+                        "p",
+                        { staticClass: "badge badge-success float-right" },
+                        [
+                          _vm._v("Buka\n                                "),
+                          _c("i", { staticClass: "fa fa-unlock" })
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c("p", { staticClass: "lead" }, [
+                        _vm._v("Lalijiwo "),
+                        _c("span", { staticClass: "fa fa-check-circle" }),
+                        _vm._v(
+                          "\n                                [ Match Persija vs PSS Sleman ]\n                            "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("p", [
+                        _vm._v(
+                          "Monggo daftar dolor-dolor..\n                            "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("ul", { staticClass: "list-inline" }, [
+                        _c("li", { staticClass: "list-inline-item" }, [
+                          _vm._v("Match : 2019-07-20")
+                        ]),
+                        _vm._v(" "),
+                        _c("li", { staticClass: "list-inline-item" }, [
+                          _vm._v("Open Slot: 60 Kursi")
+                        ]),
+                        _vm._v(" "),
+                        _c("li", { staticClass: "list-inline-item" }, [
+                          _vm._v("Biaya : 500.000")
+                        ]),
+                        _vm._v(" "),
+                        _c("li", { staticClass: "list-inline-item" }, [
+                          _vm._v("Tutup : 2019-07-15")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("button", { staticClass: "btn btn-success" }, [
+                        _c("i", { staticClass: "fa fa-eye" }),
+                        _vm._v(" Selengkapnya >>")
+                      ])
+                    ])
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-2aab0047", module.exports)
+  }
+}
+
+/***/ }),
+/* 56 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

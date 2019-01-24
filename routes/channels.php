@@ -24,3 +24,8 @@ Broadcast::channel('tasks', function ($user) {
     	'id' => $user->id
     ];
 });
+
+Broadcast::channel('user.{toUserId}', function($user,$toUserId){
+	//return $user->user_id == $toUserId;
+	return true;
+});

@@ -3,59 +3,74 @@
 		<div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Awaydays
-                <button type="button" class="btn btn-info float-right" data-toggle="modal" data-target="#bukaPendaftaranModal">Buka Pendaftaran</button>
+                <div class="card-header bg-success">Awaydays
+                <button type="button" class="btn btn-default float-right" data-toggle="modal" data-target="#bukaPendaftaranModal">
+                <i class="fa fa-edit"></i>
+                Buka Pendaftaran Awaydays
+                </button>
                 </div>
                 <div class="card-body">
-                   <!--  @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif -->
-                    <!-- alert -->
-                    <div class="alert alert-warning" role="alert"> 
-                        Anda belum membuka pendaftaran
-                    </div>
-                    <!-- end alert -->
                     <!-- table -->
-                    <table class="table table-responsive">
+                    <form>
+                      <div class="form-row">
+                      <div class="col">
+                        <div class="form-group">
+                        <label class="font-weight-bold">Tampilkan</label>
+                        <select class="form-control col-md-2" v-model="pageSize">
+                          <option>5</option>
+                          <option>10</option>
+                          <option>50</option>
+                          <option>100</option>
+                        </select>
+                        </div>
+                      </div>
+                      </div>
+                    </form>
+                    <div class="table-responsive">
+                    <table class="table">
                       <thead class="thead-light">
                         <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Judul</th>
-                          <th scope="col">Tanggal Match</th>
-                          <th scope="col">Tutup Pendaftaran</th>
-                          <th scope="col">Total pendaftar</th>
-                          <th scope="col">Status</th>
+                          <th>#</th>
+                          <th>Judul</th>
+                          <th>Tanggal Match</th>
+                          <th>Tutup Pendaftaran</th>
+                          <th>Total Pendaftar</th>
+                          <th>Status</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Match PSSI vs PSSI hdhdhdh </td>
-                          <td>11/01/2018</td>
-                          <td>9/01/2018</td>
-                          <td>100/450</td>
-                          <td><span class="badge badge-success">Buka</span></td>
-                        </tr>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Match PSSI vs PSSI</td>
-                          <td>11/01/2018</td>
-                          <td>9/01/2018</td>
-                          <td>100/450</td>
-                          <td><span class="badge badge-danger">Tutup</span></td>
+                        <tr v-for="(awayday,i) in sortedAwaydays" :key="awayday.id">
+                          <th>{{awayday.row}}</th>
+                          <td>{{ awayday.judul}}</td>
+                          <td>{{ awayday.jadwal_match}}</td>
+                          <td>{{ awayday.tutup_pendaftaran}}</td>
+                          <td>-</td>
+                          <td><span class="badge badge-success">{{ awayday.status_aktif }}</span></td>
                         </tr>
                       </tbody>
                     </table>
+                    </div>
                     <!-- end table -->
+          
+                    <p class="font-weight-bold float-left">
+                      Halaman {{currentPage}} - Total Record {{totalData}}
+                    </p>
+                    <p class="float-right">
+                      <button class="btn btn-default" @click="prevPage">
+                      <i class="fa fa-angle-double-left"></i> Previous
+                      </button> 
+                      <button class="btn btn-default" @click="nextPage">
+                        Next
+                        <i class="fa fa-angle-double-right"></i>
+                      </button>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="bukaPendaftaranModal" tabindex="-1" role="dialog" aria-labelledby="bukaPendaftaranModal" aria-hidden="true">
+    <div class="modal fade" id="bukaPendaftaranModal" tabindex="-1" role="dialog" aria-labelledby="bukaPendaftaranModal" aria-hidden="true" ref="vuemodal">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -114,6 +129,7 @@
 	export default{
 		data(){
 			return {
+				authenticatedUserId: '',
 				judul: '',
 				jadwal_match:'',
 				lokasi_match:'',
@@ -121,13 +137,44 @@
 				slot:'',
 				tutup_pendaftaran:'',
 				keterangan:'',
+        awaydays:[],
+        pageSize:5,
+        currentPage:1,
+        totalData:'0',
+        totalPage:'',
 			}
 		},
+		created(){
+			this.getAuthenticatedUser();
+
+      this.getAwaydays();
+
+		},
+    mounted(){
+
+    },
+    computed:{
+      sortedAwaydays:function(){
+        return this.awaydays.filter((row,index) => {
+          let start = (this.currentPage-1) * this.pageSize;
+          let end = this.currentPage*this.pageSize;
+          if(index >= start && index < end) return true;
+        });
+      }
+    },
 		methods: {
+      nextPage:function() {
+        if((this.currentPage*this.pageSize) < this.awaydays.length) this.currentPage++;
+      },
+      prevPage:function() {
+        if(this.currentPage > 1) this.currentPage--;
+      },
+			//insert data into database
 			insertData(){
 				let currentObj = this;
 				//data form
 				var formData = {
+          row : 'Terbaru',
 					judul : this.judul,
 					jadwal_match: this.jadwal_match,
 					lokasi_match: this.lokasi_match,
@@ -135,10 +182,11 @@
 					slot: this.slot,
 					tutup_pendaftaran: this.tutup_pendaftaran,
 					keterangan: this.keterangan,
+          status_aktif: 'open',
 				}
 				axios({
 					method: 'post',
-          url: '/api/awayday',
+          url: '/rsc/saveAwaydayData',
           data: formData
 				})
 				.then(function(response){
@@ -152,12 +200,51 @@
 					currentObj.keterangan = '';
 
 					toastr.success(response.data.judul,'Success Buka Pendaftaran')
+          //close the modal
+          currentObj.awaydays.unshift(formData)
+          
 					
 				})
 				.catch(function(error){
 					console.log(error)
 				});
-			}
+			},
+
+			//get user id
+			getAuthenticatedUser(){
+				let currentObj = this;
+				axios({
+					method: 'get',
+					url: 'authUserId'
+				})
+				.then(function(response){
+					//alert(response.data.AuthId)
+					currentObj.authenticatedUserId = response.data.AuthId.name
+
+				})
+				.catch(function(error){
+					console.log(error)
+				});
+			},
+
+      //get data awaydays
+      getAwaydays(){
+        let currentObj = this;
+        axios({
+          method: 'get',
+          url: 'rsc/showAwaydayData'
+        })
+        .then(function(response){
+          console.log(response);
+          currentObj.awaydays = response.data ;
+          currentObj.totalData = currentObj.awaydays.length;
+
+        })
+        .catch(function(error){
+          console.log(error)
+        });
+      }
+
 		}
 	}
 </script>

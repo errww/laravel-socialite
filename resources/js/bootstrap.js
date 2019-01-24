@@ -54,4 +54,5 @@ window.Echo = new Echo({
     key: '3c7c1fbabab026f5f3f0',
     cluster: 'ap1',
     encrypted: true
+
 });

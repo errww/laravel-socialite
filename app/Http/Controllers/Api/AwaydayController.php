@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 use App\Awayday;
 use App\Http\Resources\Awayday as AwaydayResource;
+use App\Events\OpenAwaydayEvent;
+use Illuminate\Support\Facades\DB;
 
 class AwaydayController extends Controller
 {
@@ -55,11 +57,16 @@ class AwaydayController extends Controller
         $awayday->tutup_pendaftaran = $request->input('tutup_pendaftaran');
         $awayday->keterangan = $request->input('keterangan');
         $awayday->status_aktif = 'open';
-        $awayday->user_id = '1';
+        $awayday->user_id = Auth::id();
         
 
         if($awayday->save()){
-            return new AwaydayResource($awayday);
+
+            //push to pusher
+            //event(new OpenAwaydayEvent($awayday));
+            broadcast(new OpenAwaydayEvent($awayday));
+            //return resource
+            //return new AwaydayResource($awayday);
         }
     }
 
@@ -69,10 +76,17 @@ class AwaydayController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show()
     {
+        //untuk penomoran 1,2.. dst
+        DB::statement(DB::raw('set @row=0'));
         
-        $awayday = Awayday::findOrFail($slug);
+        //$awayday = Awayday::where('user_id', $slug)->orderBy('id','desc')->get();
+        $awayday = DB::table('awaydays')
+                        ->selectRaw('*, @row:=@row+1 as row')
+                        ->where('user_id', Auth::id())
+                        ->orderBy('id')
+                        ->get();
 
         return new AwaydayResource($awayday);
     }
