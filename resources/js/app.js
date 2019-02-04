@@ -23,6 +23,9 @@ Vue.component('component-dashboard', require('./components/AdminComponents/Dashb
 Vue.component('component-form-table-awayday',require('./components/AdminComponents/Awayday/FormInsertAndTableComponent.vue'));
 //component for awaydays timeline
 Vue.component('component-timeline-awaydays',require('./components/AdminComponents/Awayday/timelineAwayday.vue'))
+//component for awaydays timeline
+Vue.component('component-awayday-detail',require('./components/AdminComponents/Awayday/AwaydayDetail.vue'))
+
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))

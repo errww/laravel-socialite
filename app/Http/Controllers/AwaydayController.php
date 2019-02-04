@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 use App\Awayday;
+use App\AwaydayDetail;
 use App\Http\Resources\Awayday as AwaydayResource;
+use App\Http\Resources\AwaydayDetail as AwaydayDetailResource;
 use App\Events\OpenAwaydayEvent;
 use Illuminate\Support\Facades\DB;
 
@@ -21,6 +23,7 @@ class AwaydayController extends Controller
             'AuthId' => $authUserId,
         ]);
     }
+
 	/**
 	 * show index page
 	 * @return view
@@ -39,14 +42,19 @@ class AwaydayController extends Controller
      */
     public function show($slug)
     {
+        $awayday = Awayday::where('slug','=', $slug)->firstOrFail();
+
     	return view('contents.awaydays.DetailAwayday');
     }
 
+    /**
+     * save awayday data
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
     public function saveAwaydayData(Request $request){
         $awayday = $request->isMethod('put') ? Awayday::findOrFail($request->slug) : new Awayday;
 
-
-        //$awayday->id = $request->input('id');
         $awayday->slug = uniqid();
         $awayday->judul = $request->input('judul');
         $awayday->jadwal_match = $request->input('jadwal_match');
@@ -69,13 +77,15 @@ class AwaydayController extends Controller
         }
     }
 
+    /**
+     * [show awayday data]
+     * @return [type] [description]
+     */
     public function showAwaydayData()
     {
 
-        //untuk penomoran 1,2.. dst
         DB::statement(DB::raw('set @row=0'));
         
-        //$awayday = Awayday::where('user_id', $slug)->orderBy('id','desc')->get();
         $awayday = DB::table('awaydays')
                         ->selectRaw('*, @row:=@row+1 as row')
                         ->where('user_id', Auth::id())
@@ -85,8 +95,40 @@ class AwaydayController extends Controller
         return new AwaydayResource($awayday);
     }
 
+    /**
+     * get awayday data for timeline
+     * @return [type] [description]
+     */
     public function getAwaydayTimeline()
+    {   
+      
+        DB::statement(DB::raw('set @row=0'));
+
+        $awayday = DB::table('awaydays')
+                        ->selectRaw('*, @row:=@row+1 as row')
+                        ->join('users', 'users.id', '=', 'awaydays.user_id')
+                        ->orderBy('awaydays.id', 'desc')
+                        ->get();
+
+        return new AwaydayResource($awayday);
+
+    }
+
+    public function getAwaydayDetail($slug)
+    {
+        $awayday = DB::table('awaydays')
+                            ->select('*')
+                            ->join('users','users.id','=','awaydays.user_id')
+                            ->where('awaydays.slug','=',$slug)
+                            ->get();
+
+        return new AwaydayResource($awayday);
+    }
+
+    public function checkIsDaftar($awayday_id,$user_id)
     {
         
     }
+
+    
 }
