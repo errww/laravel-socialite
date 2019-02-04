@@ -9,21 +9,22 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use App\Awayday;
 
-class TaskEvent implements ShouldBroadcast
+class OpenAwaydayEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $message;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Awayday $message)
     {
-        
+        $this->message = $message;
     }
-
 
     /**
      * Get the channels the event should broadcast on.
@@ -32,6 +33,6 @@ class TaskEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('tasks');
+        return new PrivateChannel('user.'.$this->message->user_id);
     }
 }

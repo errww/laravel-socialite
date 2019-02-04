@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Auth;
 use App\Awayday;
 use App\Http\Resources\Awayday as AwaydayResource;
+use App\Events\OpenAwaydayEvent;
+use Illuminate\Support\Facades\DB;
 
 class AwaydayController extends Controller
 {
@@ -44,21 +47,26 @@ class AwaydayController extends Controller
         $awayday = $request->isMethod('put') ? Awayday::findOrFail($request->slug) : new Awayday;
 
 
-        $awayday->id = $request->input('id');
-        $awayday->slug = $request->input('slug');
+        //$awayday->id = $request->input('id');
+        $awayday->slug = uniqid();
         $awayday->judul = $request->input('judul');
-        $awayday->judul = $request->input('jadwal_match');
+        $awayday->jadwal_match = $request->input('jadwal_match');
         $awayday->lokasi_match = $request->input('lokasi_match');
         $awayday->biaya = $request->input('biaya');
         $awayday->slot = $request->input('slot');
         $awayday->tutup_pendaftaran = $request->input('tutup_pendaftaran');
         $awayday->keterangan = $request->input('keterangan');
-        $awayday->status_aktif = $request->input('status_aktif');
-        $awayday->user_id = $request->input('user_id');
+        $awayday->status_aktif = 'open';
+        $awayday->user_id = Auth::id();
         
 
         if($awayday->save()){
-            return new AwaydayResource($awayday);
+
+            //push to pusher
+            //event(new OpenAwaydayEvent($awayday));
+            broadcast(new OpenAwaydayEvent($awayday));
+            //return resource
+            //return new AwaydayResource($awayday);
         }
     }
 
@@ -68,10 +76,17 @@ class AwaydayController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show()
     {
+        //untuk penomoran 1,2.. dst
+        DB::statement(DB::raw('set @row=0'));
         
-        $awayday = Awayday::findOrFail($slug);
+        //$awayday = Awayday::where('user_id', $slug)->orderBy('id','desc')->get();
+        $awayday = DB::table('awaydays')
+                        ->selectRaw('*, @row:=@row+1 as row')
+                        ->where('user_id', Auth::id())
+                        ->orderBy('id')
+                        ->get();
 
         return new AwaydayResource($awayday);
     }

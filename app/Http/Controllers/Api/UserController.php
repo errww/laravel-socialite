@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\User;
 use App\Http\Resources\User as UserResource;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *

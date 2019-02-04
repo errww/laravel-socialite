@@ -24,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\TaskEvent' => [
             'App\Listeners\TaskEventListener',
         ],
+        'App\Events\OpenAwaydayEvent' => [
+            'App\Listeners\OpenAwaydayListener'
+        ]
     ];
 
     /**

@@ -28,4 +28,9 @@ class Awayday extends Model
     {
     	return $this->belongsTo('App\User');
     }
+
+    public function awayday_detail(){
+
+        return $this->hasMany('App\AwaydayDetail');
+    }
 }

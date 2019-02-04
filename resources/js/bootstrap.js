@@ -21,6 +21,7 @@ try {
  */
 
 window.axios = require('axios');
+window.toastr = require('toastr');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -53,4 +54,5 @@ window.Echo = new Echo({
     key: '3c7c1fbabab026f5f3f0',
     cluster: 'ap1',
     encrypted: true
+
 });
