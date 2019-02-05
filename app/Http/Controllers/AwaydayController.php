@@ -124,10 +124,21 @@ class AwaydayController extends Controller
 
         return new AwaydayResource($awayday);
     }
+    
 
-    public function checkIsDaftar($awayday_id,$user_id)
+    public function checkIsUserRegistrationAwayday($slug)
     {
-        
+        //check user apakah sudah daftar awayday atau belum
+        $awayday = Awayday::where('slug', '=' ,$slug)->firstOrFail();
+
+        $check = AwaydayDetail::where('awayday_id', '=', $awayday->id)
+                                ->where('user_id', '=', Auth::id())
+                                ->first();
+
+        //dd($check);
+
+        return new AwaydayDetailResource($check);
+
     }
 
     

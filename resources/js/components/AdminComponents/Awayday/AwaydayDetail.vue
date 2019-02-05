@@ -50,13 +50,13 @@
                     
                     <hr>
                     <p class="text-center">
-                      <button class="btn btn-success" :disabled="DaftarDisabled == 1 ? true : false">Daftar Awaydays</button>
-                      <button class="btn btn-warning" v-show="false">Konfirmasi Pembayaran</button>
+                      <button class="btn btn-success" v-if="btnDaftarSeen" v-on:click="goDaftarAwayday" >Daftar Awaydays</button>
+                      <button class="btn btn-warning" v-if="btnKonfirmasiSeen">Konfirmasi Pembayaran</button>
                     </p>
 
-                    <hr>
+                    <!-- <hr> -->
                     
-                    <div class="alert alert-warning" role="alert">
+                    <div class="alert alert-warning" role="alert" v-if="warningMessage">
   										Mohon untuk melakukan pembayaran & konfirmasi sebelum hari <strong>Selasa tanggal 5-Januari-2019.</strong>
   										Langkah-langkah :
   										<br>
@@ -67,15 +67,15 @@
   										<strong>2. Lakukan Konfirmasi pembayaran</strong>
 										</div>
 
-										<hr>
+										<!-- <hr> -->
 
-										<div class="alert alert-danger" role="alert">
+										<div class="alert alert-danger" role="alert" v-if="dangerMessage">
   										Pendaftaran awayday anda gagal, anda belum melakukan pembayaran dan konfirmasi.
 										</div>
 
-										<hr>
+										<!-- <hr> -->
 
-										<table class="table table-borderless">
+										<table class="table table-borderless" v-if="registrationDetail">
 									  <tbody>
 									    <tr>
 									      <th scope="row">Pendaftaran</th>
@@ -120,32 +120,21 @@
           biaya:'',
           tutup_pendaftaran:'',
         },
-				DaftarDisabled:0,
-				ConfirmationDisabled:1,
+				btnDaftarSeen: false,
+				btnKonfirmasiSeen: false,
+        warningMessage: false,
+        dangerMessage: false,
+        registrationDetail: false
 			}
 		},
     created(){
 
       this.getAwaydayDetail();
 
+      this.checkIsUserRegistrationAwayday();
+
     },
 		methods : {
-
-			checkIsDaftar(){
-				let currentObj = this;
-				axios({
-					method: 'get',
-          url: 'rsc/checkIsDaftar'
-				})
-				.then(function(response){
-					console.log(response)
-          //currentObj.awaydays = response.data ;
-          //currentObj.totalData = currentObj.awaydays.length;
-				})
-				.catch(function(error){
-					console.log(error)
-				});
-			},
 
       getAwaydayDetail(){
         let currentObj = this;
@@ -171,6 +160,46 @@
         })
         .catch(function(error){
           console.log(error)
+        });
+      },
+
+      checkIsUserRegistrationAwayday(){
+        let currentObj = this;
+        //get url
+        let pageURL = window.location.href;
+        let lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+        let URL = '/rsc/checkIsUserRegistrationAwayday/' + lastURLSegment;
+
+        axios({
+          method: 'get',
+          url: URL
+        })
+        .then(function(response){
+          console.log(response.data)
+          //if empty data on awayday detail
+          if(!response.data.length){
+            //show btn daftar
+            currentObj.btnDaftarSeen = true
+          }
+        })
+        .catch(function(error){
+          console.log(error)
+        });
+        
+      },
+
+      goDaftarAwayday(){
+        let currentObj = this;
+        swal({
+          title: "Yakin Daftar?",
+          text: "Daftar awayday " + currentObj.awayday.judul  + " ?",
+          icon: "warning",
+          button: "Ya"
+        })
+        .then(willDelete => {
+          if (willDelete) {
+            swal("Deleted!", "Your imaginary file has been deleted!", "success");
+          }
         });
       }
 

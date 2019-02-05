@@ -39,7 +39,7 @@ Route::get('awaydays/{id}', 'AwaydayController@show')->name('awaydays-show');
 Route::get('rsc/showAwaydayData', 'AwaydayController@showAwaydayData')->name('show-awayday-data');
 Route::get('rsc/getAwaydayTimeline', 'AwaydayController@getAwaydayTimeline')->name('get-awayday-timeline');
 Route::post('rsc/saveAwaydayData', 'AwaydayController@saveAwaydayData')->name('save-awayday-data');
-Route::post('rsc/checkIsDaftar', 'AwaydayController@checkIsDaftar')->name('check-is-daftar');
 Route::get('rsc/getAwaydayDetail/{slug}', 'AwaydayController@getAwaydayDetail')->name('get-awayday-detail');
+Route::get('rsc/checkIsUserRegistrationAwayday/{slug}', 'AwaydayController@checkIsUserRegistrationAwayday')->name('check-is-registration-awayday');
 
 
